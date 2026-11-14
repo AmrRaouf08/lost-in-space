@@ -467,14 +467,22 @@ document.querySelectorAll('[data-dlg]').forEach(function(p){var t=DIALOGUE[p.dat
     var t=ac.currentTime;E.out.gain.cancelScheduledValues(t);E.out.gain.setTargetAtTime(0,t,.6);
     offT=setTimeout(function(){if(!on&&ac){ac.suspend();if(tk){clearInterval(tk);tk=null;}}},3200);
   }
-  btn.addEventListener('click',function(){
+  function setSound(state){
     try{
-      if(!ac)build();
-      on=!on;
+      if(state&&!ac)build();
+      if(on===state)return;
+      on=state;
       if(on)start();else stop();
-      btn.textContent='Sound: '+(on?'on':'off');btn.setAttribute('aria-pressed',on);
-    }catch(e){btn.textContent='Sound unavailable';btn.disabled=true;}
-  });
+      btn.textContent='Sound: '+(on?'on':'off');
+      btn.setAttribute('aria-pressed',on);
+    }catch(e){
+      btn.textContent='Sound unavailable';
+      btn.disabled=true;
+    }
+  }
+  btn.addEventListener('click',function(){setSound(!on);});
+  var startBtn=document.querySelector('#hero .startbtn');
+  if(startBtn){startBtn.addEventListener('click',function(){setSound(true);});}
   // pause the music while the tab is in the background
   document.addEventListener('visibilitychange',function(){
     if(!ac||!on)return;
